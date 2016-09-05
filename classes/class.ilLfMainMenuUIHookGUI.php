@@ -163,6 +163,18 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 						$gl = new lfGroupedListGUI($this->getPluginObject());
 						$gl->setAsDropDown(true);
 
+// fau: mainMenuHelp - add toggle of help and tooltips to the main menu
+						global $ilHelp;
+						$lng->loadLanguageModule("help");
+						if ($ilHelp->hasSections())
+						{
+							$gl->addEntry("<span> &nbsp; &nbsp; </span> ".$lng->txt("help_open_online_help"), "#", "", "il.Help.listHelp(event, false);");
+						}
+						$gl->addEntry('<span id="help_tt_switch_on" class="glyphicon glyphicon-ok"></span> '.$lng->txt("help_tooltips"), "#", "", "return il.Help.switchTooltips(event);");
+						$gl->addSeparator();
+
+// fau.
+
 	//					var_dump($menu);
 						$cust_done = false;
 						if (count($items) > 0)
@@ -316,16 +328,20 @@ class ilLfMainMenuUIHookGUI extends ilUIHookPluginGUI
 			}
 		}
 
+// fau: mainMenuAppend - don't render administration because custom menus are added
 		// we always render the administration, if user has the permission
-		if(!$this->admin_menu && ilMainMenuGUI::_checkAdministrationPermission())
-		{
-			$mm_gui->renderDropDown($tpl, "administration");
-			$tpl->setCurrentBlock("c_item");
-			$tpl->parseCurrentBlock();
-		}
+//		if(!$this->admin_menu && ilMainMenuGUI::_checkAdministrationPermission())
+//		{
+//			$mm_gui->renderDropDown($tpl, "administration");
+//			$tpl->setCurrentBlock("c_item");
+//			$tpl->parseCurrentBlock();
+//		}
+// fau.
 
 		$html = $tpl->get();
-		return array("mode" => ilUIHookPluginGUI::REPLACE, "html" => $html);
+// fau: mainMenuAppend - append new menus instead of replacing the whole menu
+		return array("mode" => ilUIHookPluginGUI::APPEND, "html" => $html);
+// fau.
 	}
 
 	/**
